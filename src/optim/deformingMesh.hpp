@@ -17,7 +17,7 @@ class DeformingMesh
     public:
  
     DeformingMesh();
-
+    static std::unique_ptr<VertexPositionGeometry> solve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, FaceData<Vector3>& normals);
     
     private:
 
