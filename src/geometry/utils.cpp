@@ -107,6 +107,43 @@ std::unique_ptr<FaceData<Vector3>> Utils::getNormals(FaceData<Vector3>& projecte
         (*normals)[i] = p_n + sqrt(1 - norm(p_n)*norm(p_n)) * plane.n;
     }
 
-
     return normals;
+}
+
+void Utils::centerPoints(VertexPositionGeometry& geometry){
+    /**
+    TODO
+    */
+    Vector3 mean;
+    for(size_t i = 0; i < geometry.vertexPositions.size(); ++i){
+        mean += geometry.vertexPositions[i];
+    }
+    mean /= geometry.vertexPositions.size();
+
+    for(size_t i = 0; i < geometry.vertexPositions.size(); ++i){
+        geometry.vertexPositions[i] -= mean;
+    }
+}
+
+std::unique_ptr<BoundaryLoop> Utils::getBoundaryLoop(ManifoldSurfaceMesh& mesh){
+    /**
+    TODO
+    */
+    std::unique_ptr<BoundaryLoop> BL = std::make_unique<BoundaryLoop>();
+
+    for(Halfedge he : mesh.halfedges()){
+        if(he.face().isBoundaryLoop() == true){
+            *BL = he.face().asBoundaryLoop();
+            break;
+        }
+    }
+    return BL;
+}
+
+std::unique_ptr<BoundaryLoopData<Vector3> Utils::getBoundaryLoop(BoundaryLoop& bLoop){
+    /**
+    TODO
+    */
+    
+    return nullptr;
 }
