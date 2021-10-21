@@ -108,7 +108,7 @@ void EmbeddedGeometryInterface::computeVertexNormals() {
     for (Corner c : v.adjacentCorners()) {
       Vector3 normal = faceNormals[c.face()];
       double weight = cornerAngles[c];
-
+ 
       normalSum += weight * normal;
     }
 

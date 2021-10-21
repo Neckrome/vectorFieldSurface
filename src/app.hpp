@@ -22,10 +22,12 @@ class App
     void run();
     static void callback();
  
+    // Static variables used for the callback function
     static std::unique_ptr<VertexPositionGeometry> geometryFlat;
     static std::unique_ptr<VertexPositionGeometry> newGeometry;
     static std::unique_ptr<ManifoldSurfaceMesh> meshFlat;
     static std::unique_ptr<FaceData<Vector3>> normals;
+    static std::unique_ptr<VertexData<Vector3>> bLoopData;
     static polyscope::SurfaceMesh* psReconsMesh;
 };
  

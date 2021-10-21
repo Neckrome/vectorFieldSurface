@@ -29,7 +29,11 @@ class Utils
     static void centerPoints(VertexPositionGeometry& geometry);
 
     static std::unique_ptr<BoundaryLoop> getBoundaryLoop(ManifoldSurfaceMesh& mesh);
-    static std::unique_ptr<BoundaryLoopData<Vector3> getBoundaryLoop(BoundaryLoop& bLoop);
+    static std::unique_ptr<VertexData<Vector3>> setBoundaryPositions(BoundaryLoop& bLoop, ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry);
+    static std::unique_ptr<VertexData<Vector3>> setBoundaryPositions(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry);
+
+    static std::unique_ptr<FaceData<Vector3>> getFaceNormalsFromVertexNormals(VertexData<Vector3> vertexNormals, ManifoldSurfaceMesh& mesh);
+
 
 
 };
