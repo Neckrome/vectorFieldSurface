@@ -191,10 +191,10 @@ std::unique_ptr<FaceData<Vector3>> Utils::getFaceNormalsFromVertexNormals(Vertex
     */
     std::unique_ptr<FaceData<Vector3>> normals = std::make_unique<FaceData<Vector3>>();
 
-    for(Face v : mesh.faces()){
+    for(Face f : mesh.faces()){
         Vector3 normal;
         for(Vertex v : f.adjacentVertices()){
-            normal += ;
+            //normal += ;
         }
     }
 

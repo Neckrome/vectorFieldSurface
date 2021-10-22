@@ -10,17 +10,17 @@ using namespace geometrycentral::surface;
 
 DeformingMesh::DeformingMesh() {}
 
-std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, VertexPositionGeometry& origGeom, VertexData<Vector3>& bondaryFixedValues, FaceData<Vector3>& normals){
+std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, VertexPositionGeometry& origGeom, VertexData<Vector3>& bondaryFixedValues, FaceData<Vector3>& normals, VertexData<Vector3>& debugGradient, float lr, float nw){
     /**
     TODO
     */
     
     std::unique_ptr<VertexPositionGeometry> newGeometry = geometry.copy();
-    float lr = 0.04f;
+    debugGradient.fill(Vector3{0.0f, 0.0f, 0.0f});
 
-    for(int iter; iter < 100000; ++iter){
+    for(int iter; iter < 10; ++iter){
         std::unique_ptr<VertexPositionGeometry> tmpGeometry = newGeometry->copy();
-        
+        Vector3 sumGrad = Vector3{0.0f, 0.0f, 0.0f};
         for(Face f : mesh.faces()){
             Vector3 n = normals[f];
             
@@ -33,7 +33,9 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
 
                 Vector3 grad_pfij_Em = 2*dot(2*P - (P1 + P2), n)*n; grad_pfij_Em[0] = 0.0f; grad_pfij_Em[2] = 0.0f;
                 Vector3 grad_p_Ed = 2*(P - origPoint); grad_p_Ed[1] = 0.0f;
-                Vector3 grad_p_E = grad_pfij_Em + grad_p_Ed;
+                Vector3 grad_p_E = nw*grad_pfij_Em; // + grad_p_Ed;
+                sumGrad = sumGrad + grad_p_E;
+                debugGradient[v] = debugGradient[v] + grad_p_E;
 
                 tmpGeometry->inputVertexPositions[v] -= lr * grad_p_E;
 
@@ -42,6 +44,7 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
                 }
             }
         }
+        std::cout << sumGrad << std::endl;
         newGeometry = tmpGeometry->copy();
     }
 

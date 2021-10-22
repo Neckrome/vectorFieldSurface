@@ -29,6 +29,9 @@ class App
     static std::unique_ptr<FaceData<Vector3>> normals;
     static std::unique_ptr<VertexData<Vector3>> bLoopData;
     static polyscope::SurfaceMesh* psReconsMesh;
+    static VertexData<Vector3> debugGradient;
+    static float lr;
+    static float nw;
 };
  
 #endif
