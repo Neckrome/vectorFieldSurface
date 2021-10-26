@@ -44,7 +44,7 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
                 }
             }
         }
-        std::cout << sumGrad << std::endl;
+        //std::cout << sumGrad << std::endl;
         newGeometry = tmpGeometry->copy();
     }
 

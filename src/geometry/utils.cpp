@@ -192,11 +192,54 @@ std::unique_ptr<FaceData<Vector3>> Utils::getFaceNormalsFromVertexNormals(Vertex
     std::unique_ptr<FaceData<Vector3>> normals = std::make_unique<FaceData<Vector3>>();
 
     for(Face f : mesh.faces()){
-        Vector3 normal;
+        Vector3 normal = Vector3{0.0f, 0.0f, 0.0f};
         for(Vertex v : f.adjacentVertices()){
-            //normal += ;
+            normal += vertexNormals[v] / v.degree();
         }
+        (*normals)[f] = normal;
     }
 
     return normals;
+}
+
+std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionGeometry>> Utils::createIcoSphere(int level){
+    
+    const float X=.525731112119133606f;
+    const float Z=.850650808352039932f;
+    const float N=0.f;
+
+    std::vector<Vector3> pts = {Vector3{-X,N,Z}, Vector3{X,N,Z}, Vector3{-X,N,-Z}, Vector3{X,N,-Z},
+                                Vector3{N,Z,X}, Vector3{N,Z,-X}, Vector3{N,-Z,X}, Vector3{N,-Z,-X},
+                                Vector3{Z,X,N}, Vector3{-Z,X, N}, Vector3{Z,-X,N}, Vector3{-Z,-X, N}};
+ 
+    std::vector<std::vector<size_t>> faces = {{0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
+                                              {8,10,1},{8,3,10},{5,3,8},{5,2,3},{2,7,3},
+                                              {7,10,3},{7,6,10},{7,11,6},{11,0,6},{0,1,6},
+                                              {6,1,10},{9,0,11},{9,11,2},{9,2,5},{7,2,11}};
+
+    /*for(int i = 0; i < level; ++i){
+        std::vector<std::vector<size_t>> tmp;
+        for(size_t fId = 0; fId < faces.size(); ++fId){
+            size_t p0 = faces[fId][0]; size_t p1 = faces[fId][1]; size_t p2 = faces[fId][2];
+            size_t id = pts.size();
+            pts.push_back((pts[p1] + pts[p0])/2);
+            pts.push_back((pts[p2] + pts[p1])/2);
+            pts.push_back((pts[p0] + pts[p2])/2);
+            tmp.push_back({p0, id, id+2}); tmp.push_back({id, p1, id+1});
+            tmp.push_back({id+2, id+1, p2}); tmp.push_back({id, id+1, id+2});
+        }
+        faces = tmp;
+    }*/
+
+    std::unique_ptr<ManifoldSurfaceMesh> meshIco;
+    std::unique_ptr<VertexPositionGeometry> geometryIco;
+    std::tie(meshIco, geometryIco) = makeManifoldSurfaceMeshAndGeometry(faces, pts);
+
+    //TODO couper toutes les edges avec un vertex
+
+    //iterer sur les faces pour reconstruire les faces
+
+
+
+    return makeManifoldSurfaceMeshAndGeometry(faces, pts);
 }

@@ -77,6 +77,10 @@ void App::run() {
     debugGradient = VertexData<Vector3>(*mesh);
     newGeometry = DeformingMesh::iterativeSolve(*meshFlat, *geometryFlat, *geometryFlat, *bLoopData, *normals, debugGradient, lr, nw);
 
+    // Creates an icosphere
+    std::unique_ptr<ManifoldSurfaceMesh> meshIco;
+    std::unique_ptr<VertexPositionGeometry> geometryIco;
+    std::tie(meshIco, geometryIco) = Utils::createIcoSphere(1);
 
     // Visualization with polyscope
     polyscope::init();
@@ -87,6 +91,8 @@ void App::run() {
     psReconsMesh = polyscope::registerSurfaceMesh("Reconstructed Surface Mesh", newGeometry->vertexPositions, mesh->getFaceVertexList());
     psReconsMesh->addFaceVectorQuantity("Normals", *normals);
     psReconsMesh->addVertexVectorQuantity("Debug Gradient", debugGradient);
+
+    polyscope::SurfaceMesh* psIco = polyscope::registerSurfaceMesh("Icosphere", geometryIco->vertexPositions, meshIco->getFaceVertexList());
 
     polyscope::PointCloud* psPC = polyscope::registerPointCloud("Projected Points", *projectedPoints);
     psPC->addVectorQuantity("Projected Normals", *projectedNormals);
