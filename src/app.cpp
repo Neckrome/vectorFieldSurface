@@ -21,7 +21,7 @@ std::unique_ptr<FaceData<Vector3>> App::normals;
 std::unique_ptr<VertexData<Vector3>> App::bLoopData;
 polyscope::SurfaceMesh* App::psReconsMesh;
 VertexData<Vector3> App::debugGradient;
-float App::lr = 0.004f;
+float App::lr = 0.04f;
 float App::nw = 1.0f;
 int i = 0;
 
@@ -43,7 +43,7 @@ void App::callback(){
 
     i++;
     newGeometry = DeformingMesh::iterativeSolve(*meshFlat, *newGeometry, *geometryFlat, *bLoopData, *normals, debugGradient, lr, nw);
-    //Utils::centerPoints(*newGeometry);
+    Utils::centerPoints(*newGeometry);
     psReconsMesh->updateVertexPositions(newGeometry->vertexPositions);
     psReconsMesh->addVertexVectorQuantity("Debug Gradient", debugGradient);
 }
@@ -54,13 +54,13 @@ void App::run() {
     // Creates a planar mesh with height values
     std::unique_ptr<ManifoldSurfaceMesh> mesh;
     std::unique_ptr<VertexPositionGeometry> geometry;
-    std::tie(mesh, geometry) = Utils::createMeshPlane(30, 30, 10, 10, [](float x, float y)->float{return sin(x)*sin(y);});
+    std::tie(mesh, geometry) = Utils::createMeshPlane(30, 30, 5, 5, [](float x, float y)->float{return x*x-y*y;});
     Utils::centerPoints(*geometry);
     geometry->requireVertexNormals();
 
     // Creates a planar mesh
     //std::unique_ptr<ManifoldSurfaceMesh> meshFlat;
-    std::tie(meshFlat, geometryFlat) = Utils::createMeshPlane(30, 30, 10, 10, [](float x, float y)->float{return 0.0f;});
+    std::tie(meshFlat, geometryFlat) = Utils::createMeshPlane(30, 30, 5, 5, [](float x, float y)->float{return 0.0f;});
 
     // Gives projected normals
     std::unique_ptr<FaceData<Vector3>> projectedPoints;
@@ -80,25 +80,28 @@ void App::run() {
     // Creates an icosphere
     std::unique_ptr<ManifoldSurfaceMesh> meshIco;
     std::unique_ptr<VertexPositionGeometry> geometryIco;
-    std::tie(meshIco, geometryIco) = Utils::createIcoSphere(1);
+    std::tie(meshIco, geometryIco) = Utils::createIcoSphere(3);
+    VertexData<Vector3> debug(*meshIco, Vector3{1.0f, 1.0f, 1.0f});
+    geometryIco->requireVertexNormals();
 
     // Visualization with polyscope
     polyscope::init();
 
-    polyscope::SurfaceMesh* psMesh = polyscope::registerSurfaceMesh("Surface Mesh", geometry->vertexPositions, mesh->getFaceVertexList());
+    /*polyscope::SurfaceMesh* psMesh = polyscope::registerSurfaceMesh("Surface Mesh", geometry->vertexPositions, mesh->getFaceVertexList());
     psMesh->addVertexVectorQuantity("Vertex Normals", geometry->vertexNormals);
 
     psReconsMesh = polyscope::registerSurfaceMesh("Reconstructed Surface Mesh", newGeometry->vertexPositions, mesh->getFaceVertexList());
     psReconsMesh->addFaceVectorQuantity("Normals", *normals);
-    psReconsMesh->addVertexVectorQuantity("Debug Gradient", debugGradient);
+    psReconsMesh->addVertexVectorQuantity("Debug Gradient", debugGradient);*/
 
     polyscope::SurfaceMesh* psIco = polyscope::registerSurfaceMesh("Icosphere", geometryIco->vertexPositions, meshIco->getFaceVertexList());
+    psIco->addVertexVectorQuantity("Vertex Debug", geometryIco->vertexNormals);
 
-    polyscope::PointCloud* psPC = polyscope::registerPointCloud("Projected Points", *projectedPoints);
+    /*polyscope::PointCloud* psPC = polyscope::registerPointCloud("Projected Points", *projectedPoints);
     psPC->addVectorQuantity("Projected Normals", *projectedNormals);
-    psPC->addVectorQuantity("Normals", *normals);
+    psPC->addVectorQuantity("Normals", *normals);*/
 
-    polyscope::state::userCallback = App::callback;
+    //polyscope::state::userCallback = App::callback;
 
     polyscope::show();
 

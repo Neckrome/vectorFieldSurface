@@ -18,12 +18,11 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
     std::unique_ptr<VertexPositionGeometry> newGeometry = geometry.copy();
     debugGradient.fill(Vector3{0.0f, 0.0f, 0.0f});
 
-    for(int iter; iter < 10; ++iter){
+    for(int iter; iter < 3; ++iter){
         std::unique_ptr<VertexPositionGeometry> tmpGeometry = newGeometry->copy();
         Vector3 sumGrad = Vector3{0.0f, 0.0f, 0.0f};
         for(Face f : mesh.faces()){
             Vector3 n = normals[f];
-            
             for(Vertex v : f.adjacentVertices()){
 
                 Vector3 P = newGeometry->inputVertexPositions[v]; 
@@ -54,5 +53,9 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
 std::unique_ptr<VertexPositionGeometry> DeformingMesh::analyticSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, FaceData<Vector3>& normals){
 
 }
+
+
+
+
 
 
