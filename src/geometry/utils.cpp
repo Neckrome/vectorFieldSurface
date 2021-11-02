@@ -6,6 +6,7 @@
 #include <functional>
 #include "geometrycentral/surface/vertex_position_geometry.h"
 #include "geometrycentral/surface/surface_mesh_factories.h"
+#include "polyscope/polyscope.h"
 
 using namespace geometrycentral;
 using namespace geometrycentral::surface;
@@ -44,7 +45,7 @@ std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionG
     return makeManifoldSurfaceMeshAndGeometry(faces, pts);
 }
 
- std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionGeometry>> Utils::createPointsPlane(int const Nx, int const Ny, float sizeX, float sizeY, std::function<float(float,float)> func) {
+std::vector<Vector3> Utils::createPointsPlane(int const Nx, int const Ny, float sizeX, float sizeY, std::function<float(float,float)> func) {
     /**
     TODO
     */
@@ -57,17 +58,7 @@ std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionG
         }
     }
 
-    
-    std::vector<std::vector<size_t>> faces(2*(Nx-1)*(Ny-1), std::vector<size_t>(3, 0));
-
-    for(int x = 0; x < Nx-1; ++x){
-        for(int y = 0; y < Ny-1; ++y){
-            faces[2*(x*(Ny-1)+y)] = {size_t(x*Ny+y), size_t(x*Ny+y+1), size_t((x+1)*Ny+y)};
-            faces[2*(x*(Ny-1)+y)+1] = {size_t(x*Ny+y+1), size_t((x+1)*Ny+y+1), size_t((x+1)*Ny+y)};
-        }
-    }
-
-    return makeManifoldSurfaceMeshAndGeometry(faces, pts);
+    return pts;
 }
 
 std::tuple<std::unique_ptr<FaceData<Vector3>>, std::unique_ptr<FaceData<Vector3>>> Utils::getProjectedNormals(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry){
@@ -96,6 +87,26 @@ std::tuple<std::unique_ptr<FaceData<Vector3>>, std::unique_ptr<FaceData<Vector3>
     }
 
     return std::tuple<std::unique_ptr<FaceData<Vector3>>, std::unique_ptr<FaceData<Vector3>>>(std::move(pts), std::move(normals));
+}
+
+std::tuple<std::unique_ptr<VertexData<Vector3>>, std::unique_ptr<VertexData<Vector3>>> Utils::getProjectedVertexNormals(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry){
+    /**
+    Projects normals of a mesh on a plane
+    @param mesh : connectivity of the mesh
+    @param geometry : positions of the vertices of the mesh in space
+    @param plane : the plane on which normals are projected
+    @return  positions and values the projected normals
+    */
+    Plane plane = Plane(Vector3{0.0f, 1.0f, 0.0f});
+    std::unique_ptr<VertexData<Vector3>> pts = std::make_unique<VertexData<Vector3>>(); (*pts) = VertexData<Vector3>(mesh);
+    std::unique_ptr<VertexData<Vector3>> normals = std::make_unique<VertexData<Vector3>>(); (*normals) = VertexData<Vector3>(mesh);
+    
+    for(Vertex v : mesh.vertices()){
+        (*normals)[v] = plane.projection(geometry.vertexNormals[v]);
+        (*pts)[v] = plane.projection(geometry.inputVertexPositions[v]);
+    }
+
+    return std::tuple<std::unique_ptr<VertexData<Vector3>>, std::unique_ptr<VertexData<Vector3>>>(std::move(pts), std::move(normals));
 }
 
 std::unique_ptr<FaceData<Vector3>> Utils::getNormals(FaceData<Vector3>& projectedNormals){
@@ -249,4 +260,14 @@ std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionG
     }
 
     return std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionGeometry>>(std::move(meshIco), std::move(geometryIco));
+}
+
+void Utils::twitchNormals(FaceData<Vector3>& normals){
+    /**
+    TODO
+    */
+    for(size_t i = 0; i < normals.size(); ++i){
+        normals[i] += 0.5*Vector3{polyscope::randomUnit(), polyscope::randomUnit(), polyscope::randomUnit()};
+        normals[i] /= norm(normals[i]);
+    }
 }

@@ -1,5 +1,3 @@
-
-
 #include "geometrycentral/surface/direction_fields.h"
 
 #include <polyscope/polyscope.h>

@@ -17,7 +17,9 @@ class DeformingMesh
     public:
  
     DeformingMesh();
+    static std::unique_ptr<VertexPositionGeometry> iterativeSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, VertexPositionGeometry& origGeom, FaceData<Vector3>& normals, VertexData<Vector3>& debugGradient, float lr, float nw);
     static std::unique_ptr<VertexPositionGeometry> iterativeSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, VertexPositionGeometry& origGeom, VertexData<Vector3>& bondaryFixedValues, FaceData<Vector3>& normals, VertexData<Vector3>& debugGradient, float lr, float nw);
+
     static std::unique_ptr<VertexPositionGeometry> analyticSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, FaceData<Vector3>& normals);
     
     private:
