@@ -193,19 +193,19 @@ std::unique_ptr<VertexData<Vector3>> Utils::setBoundaryPositions(ManifoldSurface
     return Utils::setBoundaryPositions(*bLoop, mesh, geometry);
 }
 
-std::unique_ptr<FaceData<Vector3>> Utils::getFaceNormalsFromVertexNormals(VertexData<Vector3> vertexNormals, ManifoldSurfaceMesh& mesh){
+std::unique_ptr<FaceData<Vector3>> Utils::getFaceNormalsFromVertexNormals(VertexData<Vector3>& vertexNormals, ManifoldSurfaceMesh& mesh){
     /**
     Interpolate face normals knowing vertex normals. Defined as the corner-angle weighted average of incident vertices normals
     @param vertexNormals : normals defined on each vertex
     @param mesh : describes the angles
     @return face normals
     */
-    std::unique_ptr<FaceData<Vector3>> normals = std::make_unique<FaceData<Vector3>>();
+    std::unique_ptr<FaceData<Vector3>> normals = std::make_unique<FaceData<Vector3>>(); (*normals) = FaceData<Vector3>(mesh);
 
     for(Face f : mesh.faces()){
         Vector3 normal = Vector3{0.0f, 0.0f, 0.0f};
         for(Vertex v : f.adjacentVertices()){
-            normal += vertexNormals[v] / v.degree();
+            normal += vertexNormals[v] / 3;
         }
         (*normals)[f] = normal;
     }
@@ -224,7 +224,7 @@ std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionG
     std::vector<Vector3> pts = {Vector3{-X,N,Z}, Vector3{X,N,Z}, Vector3{-X,N,-Z}, Vector3{X,N,-Z},
                                 Vector3{N,Z,X}, Vector3{N,Z,-X}, Vector3{N,-Z,X}, Vector3{N,-Z,-X},
                                 Vector3{Z,X,N}, Vector3{-Z,X, N}, Vector3{Z,-X,N}, Vector3{-Z,-X, N}};
- 
+  
     std::vector<std::vector<size_t>> faces = {{0,1,4},{0,4,9},{9,4,5},{4,8,5},{4,1,8},
                                               {8,1,10},{8,10,3},{5,8,3},{5,3,2},{2,3,7},
                                               {7,3,10},{7,10,6},{7,6,11},{11,6,0},{0,6,1},

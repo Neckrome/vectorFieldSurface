@@ -33,7 +33,7 @@ class Utils
     static std::unique_ptr<VertexData<Vector3>> setBoundaryPositions(BoundaryLoop& bLoop, ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry);
     static std::unique_ptr<VertexData<Vector3>> setBoundaryPositions(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry);
 
-    static std::unique_ptr<FaceData<Vector3>> getFaceNormalsFromVertexNormals(VertexData<Vector3> vertexNormals, ManifoldSurfaceMesh& mesh);
+    static std::unique_ptr<FaceData<Vector3>> getFaceNormalsFromVertexNormals(VertexData<Vector3>& vertexNormals, ManifoldSurfaceMesh& mesh);
     
     static std::tuple<std::unique_ptr<ManifoldSurfaceMesh>, std::unique_ptr<VertexPositionGeometry>> createIcoSphere(int level);
     static void twitchNormals(FaceData<Vector3>& normals);
