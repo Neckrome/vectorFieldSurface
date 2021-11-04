@@ -24,6 +24,6 @@ void App::run() {
     std::cout << "Running..." << std::endl;
     
     Test test = Test();
-    test.test3();
+    test.test1();
 
 }

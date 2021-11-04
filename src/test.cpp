@@ -162,7 +162,7 @@ void Test::test1() {
     // Creates a planar mesh with height values
     std::unique_ptr<ManifoldSurfaceMesh> mesh;
     std::unique_ptr<VertexPositionGeometry> geometry;
-    std::tie(mesh, geometry) = Utils::createMeshPlane(30, 30, 5, 5, [](float x, float y)->float{return x*x-y*y;});
+    std::tie(mesh, geometry) = Utils::createMeshPlane(30, 30, 5, 5, [](float x, float y)->float{return sin(x)*sin(y);});
     Utils::centerPoints(*geometry);
     geometry->requireVertexNormals();
 
@@ -184,7 +184,7 @@ void Test::test1() {
     // Deforms a planar mesh so that the geometry matches given normals
     debugGradient = VertexData<Vector3>(*mesh);
     newGeometry = DeformingMesh::iterativeSolve(*meshFlat, *geometryFlat, *geometryFlat, *bLoopData, *normals, debugGradient, lr, nw);
-
+    Utils::centerPoints(*newGeometry);
 
     // Visualization with polyscope
     polyscope::init();
@@ -200,7 +200,7 @@ void Test::test1() {
     psPC->addVectorQuantity("Projected Normals", *projectedNormals);
     psPC->addVectorQuantity("Normals", *normals);
 
-    polyscope::state::userCallback = Test::callback1;
+    //polyscope::state::userCallback = Test::callback1;
 
     polyscope::show();
 

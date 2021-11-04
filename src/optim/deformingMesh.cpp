@@ -5,6 +5,8 @@
 #include "geometrycentral/surface/surface_mesh_factories.h"
 #include "geometrycentral/numerical/linear_solvers.h"
 
+#include <Eigen/Sparse>
+
 using namespace geometrycentral;
 using namespace geometrycentral::surface;
 
@@ -141,8 +143,25 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
     return newGeometry;
 }
 
+void fillVector(Eigen::VectorXd& v, VertexPositionGeometry& geometry){
+    for(size_t i = 0; i < v.size(); ++i){
 
-std::unique_ptr<VertexPositionGeometry> DeformingMesh::analyticSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, FaceData<Vector3>& normals){
+    }
+}
+
+std::unique_ptr<VertexPositionGeometry> DeformingMesh::analyticSolve(ManifoldSurfaceMesh& mesh, VertexPositionGeometry& geometry, VertexData<Vector3>& bondaryFixedValues, FaceData<Vector3>& normals){
+    /**TODO
+     * /
+    */
+    size_t nFaces = mesh.nFaces();
+    size_t nVertices = mesh.nVertices();
+    Eigen::SparseMatrix<double> C(nFaces, nVertices);
+    Eigen::SparseMatrix<double> Id(nFaces, nVertices);
+    Id.setIdentity();
+
+    Eigen::VectorXd q = Eigen::VectorXd::Zero(nVertices);
+
+    
 
 }
 
