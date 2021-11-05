@@ -94,7 +94,7 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
                 }
             }
         }
-        std::cout << alignement << std::endl;
+        //std::cout << alignement << std::endl;
         newGeometry = tmpGeometry->copy();
     }
 
@@ -136,7 +136,7 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::iterativeSolve(ManifoldSu
 
             }
         }
-        std::cout << alignement << std::endl;
+        //std::cout << alignement << std::endl;
         newGeometry = tmpGeometry->copy();
     }
 
@@ -155,13 +155,27 @@ std::unique_ptr<VertexPositionGeometry> DeformingMesh::analyticSolve(ManifoldSur
     */
     size_t nFaces = mesh.nFaces();
     size_t nVertices = mesh.nVertices();
-    Eigen::SparseMatrix<double> C(nFaces, nVertices);
-    Eigen::SparseMatrix<double> Id(nFaces, nVertices);
+    Eigen::SparseMatrix<double> C(3*nFaces, nVertices);
+    Eigen::SparseMatrix<double> Id(3*nFaces, nVertices);
     Id.setIdentity();
 
     Eigen::VectorXd q = Eigen::VectorXd::Zero(nVertices);
 
-    
+    for(size_t fId = 0; fId < nFaces; ++fId){
+        Face f = mesh.face(fId);
+        Vector3 n = normals[f];
+        Vertex v = f.halfedge();
+        size_t v0Id = v.getindex();
+        size_t v1Id = v.halfedge().next().vertex().getindex();
+        size_t v2Id = v.halfedge().next().next().vertex().getindex();
+        Vector3 P0 = geometry->inputVertexPositions[v]; 
+        Vector3 P1 = geometry->inputVertexPositions[v.halfedge().next().vertex()];
+        Vector3 P2 = geometry->inputVertexPositions[v.halfedge().next().next().vertex()];
+        C.coeffRef(3*fId  , vId) = ; C.coeffRef(3*fId  , vId+1) = ; C.coeffRef(3*fId  , vId+2) = ;
+        C.coeffRef(3*fId+1, vId) = ; C.coeffRef(3*fId+1, vId+1) = ; C.coeffRef(3*fId+1, vId+2) = ; 
+        C.coeffRef(3*fId+2, vId) = ; C.coeffRef(3*fId+2, vId+1) = ; C.coeffRef(3*fId+2, vId+2) = ;
+        
+    }
 
 }
 
